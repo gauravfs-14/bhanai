@@ -66,8 +66,14 @@ const parseArgument = async (arg) => {
 
 const parseLine = async (line) => {
   line = line.trim();
-  if (!line || line.startsWith("tippani")) return;
 
+  // Ignore empty lines
+  if (!line) return;
+
+  // Ignore single-line comments starting with # or tippani
+  if (line.startsWith("#") || line.startsWith("tippani")) return;
+
+  // Match and parse commands
   const commandMatch = line.match(/^(\w+)\((.*)\)$/);
   if (!commandMatch) {
     throw new Error(`Syntax Error: Unable to parse line: ${line}`);
@@ -108,7 +114,21 @@ const parseLine = async (line) => {
 
 export const parseFile = async (filePath) => {
   const lines = (await fs.readFile(filePath, "utf-8")).split("\n");
-  for (const line of lines) {
+  let isInsideMultilineComment = false;
+
+  for (let line of lines) {
+    line = line.trim();
+
+    // Handle multi-line comments
+    if (line.startsWith('"""')) {
+      isInsideMultilineComment = !isInsideMultilineComment;
+      continue;
+    }
+
+    // Skip the line if inside a multi-line comment
+    if (isInsideMultilineComment) continue;
+
+    // Parse the line if not a comment
     await parseLine(line);
   }
 };
