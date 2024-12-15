@@ -1,0 +1,20 @@
+rakha("name", "Gaurab")
+sadai_rakha("PI", 3.14159)
+
+rakha("sum", jod(10, 20))
+bhanai("Hello, " + name + "! Sum of 10 and 20 is: " + sum)
+
+rakha("difference", ghata(50, 30))
+bhanai("Difference between 50 and 30 is: " + difference)
+
+rakha("nestedResult", jod(5, guna(2, 3)))
+bhanai("Nested function call result: " + nestedResult)
+
+rakha("product", guna(5, 6))
+bhanai("Product of 5 and 6 is: " + product)
+
+rakha("quotient", bhaag(20, 4))
+bhanai("Quotient of 20 and 4 is: " + quotient)
+
+rakha("remainder", shesh(25, 4))
+bhanai("Remainder when 25 is divided by 4 is: " + remainder)

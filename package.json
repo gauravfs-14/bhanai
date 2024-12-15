@@ -1,0 +1,11 @@
+{
+  "name": "bhanai",
+  "version": "1.0.0",
+  "description": "Bhanai programming language",
+  "main": "src/parser.js",
+  "bin": {
+    "chalau": "./bin/bhanai.js"
+  },
+  "type": "module",
+  "dependencies": {}
+}
