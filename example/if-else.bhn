@@ -1,0 +1,6 @@
+rakha("age", 15)
+
+yadi age < 18:
+    bhanai("Timro umar kam chha.")
+aru:
+    bhanai("Timro umar thik chha.")

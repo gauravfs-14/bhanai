@@ -66,6 +66,15 @@ const runtime = {
     return a / b;
   },
   shesh: (a, b) => a % b,
+
+  // Logical operations
+  ra: (a, b) => a && b, // Logical AND
+  athawa: (a, b) => a || b, // Logical OR
+  hoina: (a) => !a, // Logical NOT
+
+  // Truthy and falsy values
+  sachho: true,
+  jutho: false,
 };
 
 export default runtime;

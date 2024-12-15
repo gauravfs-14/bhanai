@@ -6,47 +6,52 @@ import fs from "fs/promises";
 const parseArgument = async (arg) => {
   arg = arg.trim();
 
-  // Handle expressions with '+' operator
-  if (arg.includes("+")) {
-    const parts = await Promise.all(
-      arg.split("+").map((part) => parseArgument(part.trim()))
-    );
-
-    if (parts.every((part) => typeof part === "number")) {
-      return parts.reduce((a, b) => a + b, 0); // Numeric sum
-    } else {
-      return parts.map((part) => String(part)).join(""); // String concatenation
-    }
+  // Handle logical NOT (hoina)
+  if (arg.startsWith("hoina(") && arg.endsWith(")")) {
+    const inner = arg.slice(6, -1).trim();
+    return runtime.hoina(await parseArgument(inner));
   }
 
-  // Handle function calls
-  if (arg.endsWith(")")) {
-    const funcNameMatch = arg.match(/^(\w+)\(/);
-    if (funcNameMatch) {
-      const funcName = funcNameMatch[1];
-      const argsString = arg.slice(funcName.length + 1, -1);
+  // Handle logical expressions (AND/OR)
+  if (arg.includes(" ra ") || arg.includes(" athawa ")) {
+    const parts = arg.split(/ ra | athawa /g);
+    const operators = arg.match(/ ra | athawa /g);
 
-      const funcArgs = [];
-      let currentArg = "";
-      let parenCount = 0;
-
-      for (const char of argsString) {
-        if (char === "(") parenCount++;
-        if (char === ")") parenCount--;
-        if (char === "," && parenCount === 0) {
-          funcArgs.push(await parseArgument(currentArg));
-          currentArg = "";
-        } else {
-          currentArg += char;
-        }
+    let result = await parseArgument(parts[0].trim());
+    for (let i = 0; i < operators.length; i++) {
+      const operator = operators[i].trim();
+      const nextValue = await parseArgument(parts[i + 1].trim());
+      if (operator === "ra") {
+        result = runtime.ra(result, nextValue);
+      } else if (operator === "athawa") {
+        result = runtime.athawa(result, nextValue);
       }
-      if (currentArg) funcArgs.push(await parseArgument(currentArg));
+    }
+    return result;
+  }
 
-      if (typeof runtime[funcName] === "function") {
-        return runtime[funcName](...funcArgs);
-      } else {
-        throw new Error(`Error: Function ${funcName} is not defined.`);
-      }
+  // Handle comparisons (e.g., age < 18)
+  const comparisonMatch = arg.match(/(.+?)\s*(==|!=|<=|>=|<|>)\s*(.+)/);
+  if (comparisonMatch) {
+    const left = await parseArgument(comparisonMatch[1].trim());
+    const operator = comparisonMatch[2].trim();
+    const right = await parseArgument(comparisonMatch[3].trim());
+
+    switch (operator) {
+      case "==":
+        return left === right;
+      case "!=":
+        return left !== right;
+      case "<":
+        return left < right;
+      case ">":
+        return left > right;
+      case "<=":
+        return left <= right;
+      case ">=":
+        return left >= right;
+      default:
+        throw new Error(`Invalid comparison operator: ${operator}`);
     }
   }
 
@@ -64,6 +69,7 @@ const parseArgument = async (arg) => {
   return runtime.get(arg);
 };
 
+// Parse a single line of code
 const parseLine = async (line) => {
   line = line.trim();
 
@@ -122,23 +128,85 @@ const parseLine = async (line) => {
   await execute(command, args);
 };
 
+// Update the parseBlock function to correctly capture indented blocks
+const parseBlock = (lines, startIndex, currentIndent) => {
+  const blockLines = [];
+  let currentIndex = startIndex;
+
+  while (currentIndex < lines.length) {
+    const line = lines[currentIndex];
+    const lineIndent = line.search(/\S/);
+
+    if (lineIndent <= currentIndent) break;
+    blockLines.push(line);
+    currentIndex++;
+  }
+
+  return { blockLines, nextIndex: currentIndex };
+};
+
+// Modify the parseFile function to fix the 'nextIndex' scope issue
 export const parseFile = async (filePath) => {
   const lines = (await fs.readFile(filePath, "utf-8")).split("\n");
   let isInsideMultilineComment = false;
+  let skipNextElse = false;
 
-  for (let line of lines) {
-    line = line.trim();
+  for (let i = 0; i < lines.length; i++) {
+    let line = lines[i];
 
     // Handle multi-line comments
-    if (line.startsWith('"""')) {
+    if (line.trim().startsWith('"""')) {
       isInsideMultilineComment = !isInsideMultilineComment;
       continue;
     }
-
-    // Skip the line if inside a multi-line comment
     if (isInsideMultilineComment) continue;
 
-    // Parse the line if not a comment
+    // Remove inline comments
+    const commentIndex = Math.min(
+      ...["#", "tippani"].map((marker) =>
+        line.indexOf(marker) >= 0 ? line.indexOf(marker) : Infinity
+      )
+    );
+    if (commentIndex !== Infinity) {
+      line = line.slice(0, commentIndex);
+    }
+
+    line = line.trim();
+    if (!line) continue;
+
+    // Handle conditions
+    if (line.startsWith("yadi ") && line.endsWith(":")) {
+      const conditionStr = line.slice(5, -1).trim();
+      const condition = await parseArgument(conditionStr);
+      const currentIndent = lines[i].search(/\S/);
+      const { blockLines, nextIndex } = parseBlock(lines, i + 1, currentIndent);
+
+      if (condition) {
+        for (const blockLine of blockLines) {
+          await parseLine(blockLine);
+        }
+        skipNextElse = true; // Skip the next 'aru' block
+      } else {
+        skipNextElse = false;
+      }
+      i = nextIndex - 1;
+      continue;
+    } else if (line.startsWith("aru:")) {
+      const currentIndent = lines[i].search(/\S/);
+      const { blockLines, nextIndex } = parseBlock(lines, i + 1, currentIndent);
+
+      if (!skipNextElse) {
+        // Execute the 'aru' block
+        for (const blockLine of blockLines) {
+          await parseLine(blockLine);
+        }
+      }
+      skipNextElse = false; // Reset after handling 'aru'
+      i = nextIndex - 1;
+      continue;
+    }
+
+    // Parse the line as a command
     await parseLine(line);
   }
 };
