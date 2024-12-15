@@ -1,24 +1,25 @@
 import { execute } from "./interpreter.js";
 import runtime from "./runtime.js";
-import fs from "fs";
+import fs from "fs/promises";
 
 // Universal argument evaluator
-const parseArgument = (arg) => {
+const parseArgument = async (arg) => {
   arg = arg.trim();
 
   // Handle expressions with '+' operator
   if (arg.includes("+")) {
-    const parts = arg.split("+").map((part) => parseArgument(part.trim()));
-    // If all parts are numbers, sum them
+    const parts = await Promise.all(
+      arg.split("+").map((part) => parseArgument(part.trim()))
+    );
+
     if (parts.every((part) => typeof part === "number")) {
-      return parts.reduce((a, b) => a + b, 0);
+      return parts.reduce((a, b) => a + b, 0); // Numeric sum
     } else {
-      // Otherwise, concatenate as strings
-      return parts.map((part) => String(part)).join("");
+      return parts.map((part) => String(part)).join(""); // String concatenation
     }
   }
 
-  // Check for function calls with nested arguments
+  // Handle function calls
   if (arg.endsWith(")")) {
     const funcNameMatch = arg.match(/^(\w+)\(/);
     if (funcNameMatch) {
@@ -28,17 +29,18 @@ const parseArgument = (arg) => {
       const funcArgs = [];
       let currentArg = "";
       let parenCount = 0;
-      for (let char of argsString) {
+
+      for (const char of argsString) {
         if (char === "(") parenCount++;
         if (char === ")") parenCount--;
         if (char === "," && parenCount === 0) {
-          funcArgs.push(parseArgument(currentArg));
+          funcArgs.push(await parseArgument(currentArg));
           currentArg = "";
         } else {
           currentArg += char;
         }
       }
-      if (currentArg) funcArgs.push(parseArgument(currentArg));
+      if (currentArg) funcArgs.push(await parseArgument(currentArg));
 
       if (typeof runtime[funcName] === "function") {
         return runtime[funcName](...funcArgs);
@@ -48,17 +50,17 @@ const parseArgument = (arg) => {
     }
   }
 
-  // Step 2: Check if it's a string literal
+  // Handle string literals
   if (arg.startsWith('"') && arg.endsWith('"')) {
     return arg.slice(1, -1); // Remove quotes
   }
 
-  // Step 3: Check if it's a number
+  // Handle numbers
   if (!isNaN(arg)) {
     return Number(arg);
   }
 
-  // Step 4: Treat as a variable or constant
+  // Handle variables/constants
   return runtime.get(arg);
 };
 
@@ -79,10 +81,8 @@ const parseLine = async (line) => {
   let parenCount = 0;
   let inQuotes = false;
 
-  for (let i = 0; i < argsString.length; i++) {
-    const char = argsString[i];
-
-    if (char === '"' && argsString[i - 1] !== "\\") {
+  for (const char of argsString) {
+    if (char === '"' && argsString[argsString.indexOf(char) - 1] !== "\\") {
       inQuotes = !inQuotes;
     }
 
@@ -90,7 +90,7 @@ const parseLine = async (line) => {
       if (char === "(") parenCount++;
       if (char === ")") parenCount--;
       if (char === "," && parenCount === 0) {
-        args.push(parseArgument(currentArg.trim()));
+        args.push(await parseArgument(currentArg.trim()));
         currentArg = "";
         continue;
       }
@@ -100,14 +100,14 @@ const parseLine = async (line) => {
   }
 
   if (currentArg.trim()) {
-    args.push(parseArgument(currentArg.trim()));
+    args.push(await parseArgument(currentArg.trim()));
   }
 
   await execute(command, args);
 };
 
 export const parseFile = async (filePath) => {
-  const lines = fs.readFileSync(filePath, "utf-8").split("\n");
+  const lines = (await fs.readFile(filePath, "utf-8")).split("\n");
   for (const line of lines) {
     await parseLine(line);
   }

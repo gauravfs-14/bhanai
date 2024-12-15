@@ -1,3 +1,6 @@
+import readline from "node:readline/promises"; // Use readline/promises for async support
+import { stdin as input, stdout as output } from "node:process";
+
 const variables = {};
 const constants = {};
 
@@ -30,6 +33,28 @@ const runtime = {
     // Trim each argument and ensure clean concatenation
     const output = args.map((arg) => String(arg).trim()).join(" ");
     console.log(output);
+  },
+
+  // Input for strings
+  sodhString: async (message) => {
+    const rl = readline.createInterface({ input, output });
+    const answer = await rl.question(message);
+    rl.close();
+    return answer.trim(); // Always return a trimmed string
+  },
+
+  // Input for numbers
+  sodhNumber: async (message) => {
+    const rl = readline.createInterface({ input, output });
+    const answer = await rl.question(message);
+    rl.close();
+
+    // Convert input to a number and validate
+    const number = Number(answer);
+    if (isNaN(number)) {
+      throw new Error("Error: Input is not a valid number.");
+    }
+    return number;
   },
 
   // Arithmetic functions
