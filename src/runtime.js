@@ -87,6 +87,11 @@ const runtime = {
   thuloAkshar: (str) => str.toUpperCase(), // Convert to uppercase
   sanoAkshar: (str) => str.toLowerCase(), // Convert to lowercase
   chhaina: (str, searchStr) => str.includes(searchStr), // Check if a substring exists
+
+  // New string functions
+  kattnu: (str, delimiter) => str.split(delimiter), // Split string into an array
+  khaliHatau: (str) => str.trim(), // Trim whitespace
+  khojnu: (str, searchStr) => str.indexOf(searchStr), // Find the position of a substring
 };
 
 export default runtime;

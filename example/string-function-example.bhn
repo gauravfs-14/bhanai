@@ -30,3 +30,23 @@ yadi chhaina(fullGreeting, "Bhanai"):
     bhanai("Bhanai exists in the greeting.")
 aru:
     bhanai("Bhanai does not exist in the greeting.")
+
+# Extended String Functions Example
+
+rakha("greeting", "   Namaste Bhanai   ")
+
+# Trim whitespace
+rakha("trimmedGreeting", khaliHatau(greeting))
+bhanai("Trimmed Greeting: " + trimmedGreeting)
+
+# Split string
+rakha("words", kattnu(trimmedGreeting, " "))
+bhanai("Split into words: " + words)
+
+# Length of an array (same as lambai for strings)
+rakha("wordCount", lambai(words))
+bhanai("Number of words: " + wordCount)
+
+# Find position of a substring
+rakha("position", khojnu(trimmedGreeting, "Bhanai"))
+bhanai("Position of 'Bhanai': " + position)
