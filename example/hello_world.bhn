@@ -1,0 +1,4 @@
+# Basic Hello World example
+
+rakha("name", "Bhanai User") # Declare a variable
+bhanai("Namaste, " + name + "! Welcome to Bhanai.") # Output a greeting

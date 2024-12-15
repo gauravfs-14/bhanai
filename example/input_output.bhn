@@ -1,0 +1,10 @@
+# Taking user input and performing operations
+
+rakha("name", sodhString("What is your name? ")) # Input a string
+bhanai("Namaste, " + name + "! Welcome to Bhanai.")
+
+rakha("num1", sodhNumber("Enter the first number: ")) # Input a number
+rakha("num2", sodhNumber("Enter the second number: ")) # Input another number
+
+rakha("sum", jod(num1, num2)) # Perform addition
+bhanai("The sum of " + num1 + " and " + num2 + " is: " + sum)

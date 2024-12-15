@@ -1,0 +1,12 @@
+# Demonstrating comments in Bhanai
+
+tippani This is a single-line comment with tippani
+# This is a single-line comment
+rakha("name", "Bhanai User") # Inline comment with #
+bhanai("Namaste, " + name + "!") tippani Inline comment with tippani
+
+"""
+This is a multi-line comment.
+Nothing inside this block will execute.
+rakha("ignored", "This will not run")
+"""
