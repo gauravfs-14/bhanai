@@ -1,9 +1,16 @@
+tippani This is a sample code for Bhanai Language
 rakha("name", "Gaurab")
 sadai_rakha("PI", 3.14159)
 
+# This is a single line comment
 rakha("sum", jod(10, 20))
 bhanai("Hello, " + name + "! Sum of 10 and 20 is: " + sum)
 
+"""
+This is 
+a multi
+line comment
+"""
 rakha("difference", ghata(50, 30))
 bhanai("Difference between 50 and 30 is: " + difference)
 
