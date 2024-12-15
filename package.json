@@ -1,6 +1,6 @@
 {
   "name": "bhanai",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Bhanai is a simple and intuitive programming language with a Nepali touch.  It leverages Node.js under the hood for execution, allowing users to create .bhn files and run them seamlessly.",
   "main": "src/parser.js",
   "bin": {
