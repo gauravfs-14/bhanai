@@ -15,17 +15,14 @@
 - [Installation](#installation)
 - [Usage](#usage)
 - [Features](#features)
-  - [1. Variable Declaration](#1-variable-declaration)
-  - [2. Constant Declaration](#2-constant-declaration)
-  - [3. Arithmetic Operations](#3-arithmetic-operations)
-  - [4. String Concatenation](#4-string-concatenation)
+  - [1. Variable and Constant Declaration](#1-variable-and-constant-declaration)
+  - [2. Arithmetic Operations](#2-arithmetic-operations)
+  - [3. Logical Operations](#3-logical-operations)
+  - [4. String Functions](#4-string-functions)
   - [5. Console Output](#5-console-output)
-  - [6. Nested Function Calls](#6-nested-function-calls)
-  - [7. Comments](#7-comments)
-  - [8. User Input](#8-user-input)
-  - [9. Conditional Statements](#9-conditional-statements)
-  - [10. Logical Operators](#10-logical-operators)
-  - [11. Boolean Values](#11-boolean-values)
+  - [6. User Input](#6-user-input)
+  - [7. Conditional Statements](#7-conditional-statements)
+  - [8. Comments](#8-comments)
 - [Example Program](#example-program)
 - [File Extension](#file-extension)
 - [Running Bhanai Programs](#running-bhanai-programs)
@@ -44,224 +41,106 @@ npm install -g bhanai
 
 ## Usage
 
-Once installed, you can run Bhanai programs using the `bhanai` command:
+Once installed, you can run Bhanai programs using the `chalau` command:
 
 1. Create a `.bhn` file with your Bhanai code. For example, `example.bhn`.
 2. Run the program with:
    ```bash
-   bhanai example.bhn
+   chalau example.bhn
    ```
 
 ---
 
 ## Features
 
-### 1. **Variable Declaration**
+### 1. **Variable and Constant Declaration**
 
-Declare variables using the `rakha` keyword. Variables can store strings, numbers, or the results of operations.
-
-```bhn
-rakha("name", "Bhanai")
-rakha("sum", jod(10, 20))
-```
+| Function      | Description         | Syntax Example               |
+| ------------- | ------------------- | ---------------------------- |
+| `rakha`       | Declare a variable. | `rakha("name", "Bhanai")`    |
+| `sadai_rakha` | Declare a constant. | `sadai_rakha("PI", 3.14159)` |
 
 ---
 
-### 2. **Constant Declaration**
+### 2. **Arithmetic Operations**
 
-Declare constants using `sadai_rakha`. Constants are immutable and cannot be reassigned.
-
-```bhn
-sadai_rakha("PI", 3.14159)
-```
-
----
-
-### 3. **Arithmetic Operations**
-
-Perform basic arithmetic operations using built-in functions:
-
-#### Addition
-
-```bhn
-rakha("sum", jod(10, 20))   tippani Sum of 10 and 20
-```
-
-#### Subtraction
-
-```bhn
-rakha("difference", ghata(50, 30))   tippani Difference between 50 and 30
-```
-
-#### Multiplication
-
-```bhn
-rakha("product", guna(5, 6))   tippani Product of 5 and 6
-```
-
-#### Division
-
-```bhn
-rakha("quotient", bhaag(20, 4))   tippani Quotient of 20 divided by 4
-```
-
-#### Modulus
-
-```bhn
-rakha("remainder", shesh(25, 4))   tippani Remainder when 25 is divided by 4
-```
+| Function | Description                      | Syntax Example                       |
+| -------- | -------------------------------- | ------------------------------------ |
+| `jod`    | Adds two numbers.                | `rakha("sum", jod(10, 20))`          |
+| `ghata`  | Subtracts two numbers.           | `rakha("difference", ghata(50, 30))` |
+| `guna`   | Multiplies two numbers.          | `rakha("product", guna(5, 6))`       |
+| `bhaag`  | Divides two numbers.             | `rakha("quotient", bhaag(20, 4))`    |
+| `shesh`  | Finds the remainder of division. | `rakha("remainder", shesh(25, 4))`   |
 
 ---
 
-### 4. **String Concatenation**
+### 3. **Logical Operations**
 
-Easily combine strings and variables using `+`.
+| Function | Description  | Syntax Example                   |
+| -------- | ------------ | -------------------------------- |
+| `ra`     | Logical AND. | `yadi age > 18 ra age < 60:`     |
+| `athawa` | Logical OR.  | `yadi age < 18 athawa age > 60:` |
+| `hoina`  | Logical NOT. | `yadi hoina(sachho):`            |
 
-```bhn
-rakha("name", "Bhanai")
-bhanai("Hello, " + name + "!")
-```
+---
+
+### 4. **String Functions**
+
+| Function      | Description                     | Syntax Example                                     |
+| ------------- | ------------------------------- | -------------------------------------------------- |
+| `jodString`   | Concatenates two strings.       | `rakha("greeting", jodString("Namaste", "!"))`     |
+| `lambai`      | Returns the length of a string. | `rakha("length", lambai("Namaste"))`               |
+| `tola`        | Extracts a substring.           | `rakha("sub", tola("Namaste", 0, 7))`              |
+| `badal`       | Replaces a substring.           | `rakha("newString", badal("Namaste", "Na", "Ka"))` |
+| `thuloAkshar` | Converts string to uppercase.   | `rakha("upper", thuloAkshar("namaste"))`           |
+| `sanoAkshar`  | Converts string to lowercase.   | `rakha("lower", sanoAkshar("NAMASTE"))`            |
+| `chhaina`     | Checks if substring exists.     | `yadi chhaina("Namaste", "aste"):`                 |
+| `kattnu`      | Splits string into an array.    | `rakha("words", kattnu("Namaste Bhanai", " "))`    |
+| `khaliHatau`  | Trims whitespace.               | `rakha("trimmed", khaliHatau("   Namaste   "))`    |
+| `khojnu`      | Finds position of substring.    | `rakha("pos", khojnu("Namaste", "aste"))`          |
+| `ulto`        | Reverses a string.              | `rakha("reverse", ulto("Namaste"))`                |
+| `thapString`  | Pads string on the right.       | `rakha("padded", thapString("Namaste", "!", 10))`  |
+| `suruThap`    | Pads string on the left.        | `rakha("padded", suruThap("Namaste", "*", 10))`    |
+| `sabdaGanna`  | Counts words in a string.       | `rakha("count", sabdaGanna("Namaste Bhanai"))`     |
 
 ---
 
 ### 5. **Console Output**
 
-Print messages and values to the console using `bhanai`.
-
-```bhn
-bhanai("Namaste, Duniya!")
-bhanai("Sum of 10 and 20 is: " + sum)
-```
+| Function | Description             | Syntax Example            |
+| -------- | ----------------------- | ------------------------- |
+| `bhanai` | Outputs to the console. | `bhanai("Hello, World!")` |
 
 ---
 
-### 6. **Nested Function Calls**
+### 6. **User Input**
 
-Combine multiple operations using nested function calls.
-
-```bhn
-rakha("nestedResult", jod(5, guna(2, 3)))   tippani Adds 5 to the product of 2 and 3
-bhanai("Nested function call result: " + nestedResult)
-```
+| Function     | Description                        | Syntax Example                                   |
+| ------------ | ---------------------------------- | ------------------------------------------------ |
+| `sodhString` | Reads string input from the user.  | `rakha("name", sodhString("Enter your name: "))` |
+| `sodhNumber` | Reads numeric input from the user. | `rakha("age", sodhNumber("Enter your age: "))`   |
 
 ---
 
-### 7. **Comments**
+### 7. **Conditional Statements**
 
-Bhanai supports both single-line and multi-line comments:
-
-#### Single-line Comments
-
-```bhn
-# This is a single-line comment
-```
-
-#### Multi-line Comments
-
-```bhn
-"""
-This is
-a multi-line
-comment
-"""
-```
+| Structure                 | Description           | Syntax Example                                 |
+| ------------------------- | --------------------- | ---------------------------------------------- |
+| `yadi ... aru`            | If-Else structure.    | `yadi age < 18: ... aru:`                      |
+| `yadi ... athawa ... aru` | If-Else-If structure. | `yadi age < 13: ... athawa age < 20: ... aru:` |
 
 ---
 
-### 8. **User Input**
+### 8. **Comments**
 
-Use `sodhString` to take string input and `sodhNumber` for numeric input.
-
-#### String Input
-
-```bhn
-rakha("name", sodhString("What is your name? "))
-bhanai("Namaste, " + name + "! Welcome to Bhanai.")
-```
-
-#### Number Input
-
-```bhn
-rakha("num1", sodhNumber("Enter the first number: "))
-rakha("num2", sodhNumber("Enter the second number: "))
-rakha("sum", jod(num1, num2))
-bhanai("The sum of " + num1 + " and " + num2 + " is: " + sum)
-```
+| Type        | Description      | Syntax Example                         |
+| ----------- | ---------------- | -------------------------------------- |
+| Single-line | Inline comments. | `# This is a comment`                  |
+| Multi-line  | Block comments.  | `""" This is a multi-line comment """` |
 
 ---
 
-### 9. **Conditional Statements**
-
-Control program flow with `yadi` (if), `athawa` (else if), and `aru` (else).
-
-#### If-Else Example
-
-```bhn
-rakha("age", 15)
-
-yadi age < 18:
-    bhanai("Timro umar kam chha.")
-aru:
-    bhanai("Timro umar thik chha.")
-```
-
-#### If-Else-If Example
-
-```bhn
-rakha("age", 15)
-
-yadi age < 13:
-    bhanai("Timro umar balak ho.")
-athawa age < 20:
-    bhanai("Timro umar kishor ho.")
-aru:
-    bhanai("Timro umar pragatisheel ho.")
-```
-
----
-
-### 10. **Logical Operators**
-
-Use `ra` (AND), `athawa` (OR), and `hoina` (NOT) for logical conditions.
-
-#### Logical AND Example
-
-```bhn
-yadi age > 18 ra age < 60:
-    bhanai("Timro umar kaam garna anukul chha.")
-```
-
-#### Logical OR Example
-
-```bhn
-yadi age < 18 athawa age > 60:
-    bhanai("Timro umar kaam garna anukul chhaina.")
-```
-
-#### Logical NOT Example
-
-```bhn
-yadi hoina(sachho):
-    bhanai("This is not true.")
-```
-
----
-
-### 11. **Boolean Values**
-
-Bhanai includes boolean values: `sachho` (true) and `jutho` (false).
-
-```bhn
-rakha("truth", sachho)
-rakha("falsehood", jutho)
-
-yadi truth:
-    bhanai("Sachho is true!")
-```
-
----
-
-### Example Program
+## Example Program
 
 Here’s a complete example showcasing the features of Bhanai:
 
@@ -274,15 +153,10 @@ sadai_rakha("PI", 3.14159)
 rakha("sum", jod(10, 20))
 bhanai("Hello, " + name + "! Sum of 10 and 20 is: " + sum)
 
-"""
-This is a multi-line comment
-explaining the next code block
-"""
-rakha("difference", ghata(50, 30))
-bhanai("Difference between 50 and 30 is: " + difference)
-
-rakha("nestedResult", jod(5, guna(2, 3)))
-bhanai("Nested function call result: " + nestedResult)
+# String manipulation
+rakha("greeting", "Namaste")
+rakha("fullGreeting", jodString(greeting, " Swagat chha Bhanai ma!"))
+bhanai("Full Greeting: " + fullGreeting)
 
 yadi age < 18:
     bhanai("Timro umar kam chha.")
@@ -294,7 +168,7 @@ aru:
 
 ---
 
-### File Extension
+## File Extension
 
 Save your Bhanai programs with the `.bhn` file extension. For example:
 
@@ -304,7 +178,7 @@ example.bhn
 
 ---
 
-### Running Bhanai Programs
+## Running Bhanai Programs
 
 To execute `.bhn` files:
 
