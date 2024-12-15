@@ -92,6 +92,11 @@ const runtime = {
   kattnu: (str, delimiter) => str.split(delimiter), // Split string into an array
   khaliHatau: (str) => str.trim(), // Trim whitespace
   khojnu: (str, searchStr) => str.indexOf(searchStr), // Find the position of a substring
+
+  ulto: (str) => str.split("").reverse().join(""), // Reverse a string
+  thapString: (str, padStr, length) => str.padEnd(length, padStr), // Pad string on the right
+  suruThap: (str, padStr, length) => str.padStart(length, padStr), // Pad string on the left
+  sabdaGanna: (str) => str.trim().split(/\s+/).length, // Count words in a string
 };
 
 export default runtime;
