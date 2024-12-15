@@ -1,0 +1,88 @@
+# String Manipulation Example
+
+rakha("greeting", "Namaste")
+
+# String concatenation
+rakha("fullGreeting", jodString(greeting, " Swagat chha Bhanai ma!"))
+bhanai("Full Greeting: " + fullGreeting)
+
+# String length
+rakha("greetingLength", lambai(greeting))
+bhanai("Length of greeting: " + greetingLength)
+
+# Substring
+bhanai("Substring (0, 7): " + tola(fullGreeting, 0, 7))
+
+# Replace substring
+rakha("replacedGreeting", badal(fullGreeting, "Namaste", "Hello"))
+bhanai("Replaced Greeting: " + replacedGreeting)
+
+# Uppercase
+rakha("upperCaseGreeting", thuloAkshar(fullGreeting))
+bhanai("Uppercase Greeting: " + upperCaseGreeting)
+
+# Lowercase
+rakha("lowerCaseGreeting", sanoAkshar(fullGreeting))
+bhanai("Lowercase Greeting: " + lowerCaseGreeting)
+
+# Check if substring exists
+yadi chhaina(fullGreeting, "Bhanai"):
+    bhanai("Bhanai exists in the greeting.")
+aru:
+    bhanai("Bhanai does not exist in the greeting.")
+
+# Extended String Functions Example
+
+rakha("greeting", "   Namaste Bhanai   ")
+
+# Trim whitespace
+rakha("trimmedGreeting", khaliHatau(greeting))
+bhanai("Trimmed Greeting: " + trimmedGreeting)
+
+# Split string
+rakha("words", kattnu(trimmedGreeting, " "))
+bhanai("Split into words: " + words)
+
+# Length of an array (same as lambai for strings)
+rakha("wordCount", lambai(words))
+bhanai("Number of words: " + wordCount)
+
+# Find position of a substring
+rakha("position", khojnu(trimmedGreeting, "Bhanai"))
+bhanai("Position of 'Bhanai': " + position)
+
+tippani New String Functions
+
+rakha("greeting", "   Namaste Bhanai User   ")
+
+# Trim whitespace
+rakha("trimmedGreeting", khaliHatau(greeting))
+bhanai("Trimmed Greeting: " + trimmedGreeting)
+
+# Split string
+rakha("words", kattnu(trimmedGreeting, " "))
+bhanai("Split into words: " + words)
+
+# Length of an array (same as lambai for strings)
+rakha("wordCount", lambai(words))
+bhanai("Number of words: " + wordCount)
+
+# Find position of a substring
+rakha("position", khojnu(trimmedGreeting, "Bhanai"))
+bhanai("Position of 'Bhanai': " + position)
+
+# Reverse string
+rakha("reversedGreeting", ulto(trimmedGreeting))
+bhanai("Reversed Greeting: " + reversedGreeting)
+
+# Pad string on the right
+rakha("paddedRight", thapString(trimmedGreeting, "!", 30))
+bhanai("Padded Right: " + paddedRight)
+
+# Pad string on the left
+rakha("paddedLeft", suruThap(trimmedGreeting, "*", 30))
+bhanai("Padded Left: " + paddedLeft)
+
+# Count words in a string
+rakha("wordCountExact", sabdaGanna(trimmedGreeting))
+bhanai("Word Count: " + wordCountExact)

@@ -76,6 +76,27 @@ const runtime = {
   // Truthy and falsy values
   sachho: true,
   jutho: false,
+
+  // String functions
+  jodString: (str1, str2) => String(str1) + String(str2), // String concatenation
+  lambai: (str) => str.length, // String length
+  tola: (str, start, end) => str.substring(start, end), // Substring
+
+  // Add more string functions
+  badal: (str, oldSub, newSub) => str.replace(new RegExp(oldSub, "g"), newSub), // Replace substring
+  thuloAkshar: (str) => str.toUpperCase(), // Convert to uppercase
+  sanoAkshar: (str) => str.toLowerCase(), // Convert to lowercase
+  chhaina: (str, searchStr) => str.includes(searchStr), // Check if a substring exists
+
+  // New string functions
+  kattnu: (str, delimiter) => str.split(delimiter), // Split string into an array
+  khaliHatau: (str) => str.trim(), // Trim whitespace
+  khojnu: (str, searchStr) => str.indexOf(searchStr), // Find the position of a substring
+
+  ulto: (str) => str.split("").reverse().join(""), // Reverse a string
+  thapString: (str, padStr, length) => str.padEnd(length, padStr), // Pad string on the right
+  suruThap: (str, padStr, length) => str.padStart(length, padStr), // Pad string on the left
+  sabdaGanna: (str) => str.trim().split(/\s+/).length, // Count words in a string
 };
 
 export default runtime;
