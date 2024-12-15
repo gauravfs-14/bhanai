@@ -18,3 +18,17 @@ bhanai("Quotient of 20 and 4 is: " + quotient)
 
 rakha("remainder", shesh(25, 4))
 bhanai("Remainder when 25 is divided by 4 is: " + remainder)
+
+
+tippani Asking the user for their name
+rakha("name", sodh("What is your name? "))
+
+bhanai("Namaste, " + name + "! Welcome to Bhanai.")
+
+tippani Asking the user for two numbers
+rakha("num1", sodh("Enter the first number: "))
+rakha("num2", sodh("Enter the second number: "))
+
+tippani Performing addition
+rakha("sum", jod(num1, num2))
+bhanai("The sum of " + num1 + " and " + num2 + " is: " + sum)

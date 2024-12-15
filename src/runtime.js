@@ -1,3 +1,6 @@
+import readline from "node:readline/promises"; // Use readline/promises for async support
+import { stdin as input, stdout as output } from "node:process";
+
 const variables = {};
 const constants = {};
 
@@ -30,6 +33,14 @@ const runtime = {
     // Trim each argument and ensure clean concatenation
     const output = args.map((arg) => String(arg).trim()).join(" ");
     console.log(output);
+  },
+
+  // Console input
+  sodh: async (message) => {
+    const rl = readline.createInterface({ input, output });
+    const answer = await rl.question(message);
+    rl.close();
+    return answer;
   },
 
   // Arithmetic functions

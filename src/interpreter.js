@@ -20,6 +20,12 @@ export const execute = async (command, args) => {
       runtime.bhanai(...args);
       break;
 
+    case "sodh":
+      if (args.length !== 1) {
+        throw new Error(`sodh expects 1 argument, got ${args.length}`);
+      }
+      return await runtime.sodh(args[0]); // Return resolved input
+
     default:
       throw new Error(`Unknown command: ${command}`);
   }
