@@ -1,0 +1,24 @@
+# Performing arithmetic operations
+
+rakha("a", 10) # Declare variable a
+rakha("b", 20) # Declare variable b
+
+# Perform addition
+rakha("sum", jod(a, b))
+bhanai("The sum of " + a + " and " + b + " is: " + sum)
+
+# Perform subtraction
+rakha("difference", ghata(b, a))
+bhanai("The difference between " + b + " and " + a + " is: " + difference)
+
+# Perform multiplication
+rakha("product", guna(a, b))
+bhanai("The product of " + a + " and " + b + " is: " + product)
+
+# Perform division
+rakha("quotient", bhaag(b, a))
+bhanai("The quotient of " + b + " divided by " + a + " is: " + quotient)
+
+# Perform modulus
+rakha("remainder", shesh(b, a))
+bhanai("The remainder when " + b + " is divided by " + a + " is: " + remainder)

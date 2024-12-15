@@ -1,0 +1,7 @@
+# Demonstrating the use of constants
+
+sadai_rakha("PI", 3.14159) # Declare a constant
+rakha("radius", 5) # Declare a variable
+
+rakha("area", guna(PI, guna(radius, radius))) # Calculate the area of a circle
+bhanai("The area of a circle with radius " + radius + " is: " + area)

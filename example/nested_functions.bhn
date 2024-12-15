@@ -1,0 +1,4 @@
+# Demonstrating nested function calls
+
+rakha("result", jod(10, guna(5, 3))) # Perform nested operations
+bhanai("The result of jod(10, guna(5, 3)) is: " + result)

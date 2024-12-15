@@ -1,0 +1,20 @@
+# Comprehensive example showcasing all features
+
+# Constants and variables
+sadai_rakha("PI", 3.14159) # Define a constant
+rakha("radius", sodhNumber("Enter the radius of the circle: ")) # Input a number
+
+# Calculate area and circumference of a circle
+rakha("area", guna(PI, guna(radius, radius))) # Area = PI * r^2
+rakha("circumference", guna(2, guna(PI, radius))) # Circumference = 2 * PI * r
+
+# Output results
+bhanai("The area of the circle is: " + area)
+bhanai("The circumference of the circle is: " + circumference)
+
+# Comments
+tippani Inline comment example
+"""
+This is a multi-line comment block.
+Nothing in this block will run.
+"""
