@@ -35,12 +35,26 @@ const runtime = {
     console.log(output);
   },
 
-  // Console input
-  sodh: async (message) => {
+  // Input for strings
+  sodhString: async (message) => {
     const rl = readline.createInterface({ input, output });
     const answer = await rl.question(message);
     rl.close();
-    return answer;
+    return answer.trim(); // Always return a trimmed string
+  },
+
+  // Input for numbers
+  sodhNumber: async (message) => {
+    const rl = readline.createInterface({ input, output });
+    const answer = await rl.question(message);
+    rl.close();
+
+    // Convert input to a number and validate
+    const number = Number(answer);
+    if (isNaN(number)) {
+      throw new Error("Error: Input is not a valid number.");
+    }
+    return number;
   },
 
   // Arithmetic functions
