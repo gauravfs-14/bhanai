@@ -25,6 +25,7 @@ const runtime = {
   get: (name) => {
     if (variables[name] !== undefined) return variables[name];
     if (constants[name] !== undefined) return constants[name];
+    if (runtime[name] !== undefined) return runtime[name]; // Added this line
     throw new Error(`Error: Variable ${name} is not defined.`);
   },
 

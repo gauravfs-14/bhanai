@@ -6,6 +6,87 @@ import fs from "fs/promises";
 const parseArgument = async (arg) => {
   arg = arg.trim();
 
+  // Handle expressions with '+' operator
+  if (arg.includes("+")) {
+    const tokens = [];
+    let currentToken = "";
+    let inQuotes = false;
+    let parenCount = 0;
+
+    for (let i = 0; i < arg.length; i++) {
+      const char = arg[i];
+
+      if (char === '"' && arg[i - 1] !== "\\") {
+        inQuotes = !inQuotes;
+      }
+
+      if (!inQuotes) {
+        if (char === "(") parenCount++;
+        if (char === ")") parenCount--;
+        if (char === "+" && parenCount === 0) {
+          tokens.push(await parseArgument(currentToken.trim()));
+          currentToken = "";
+          continue;
+        }
+      }
+
+      currentToken += char;
+    }
+
+    if (currentToken.trim()) {
+      tokens.push(await parseArgument(currentToken.trim()));
+    }
+
+    // Sum numbers or concatenate strings
+    if (tokens.every((token) => typeof token === "number")) {
+      return tokens.reduce((a, b) => a + b, 0);
+    } else {
+      return tokens.map((token) => String(token)).join("");
+    }
+  }
+
+  // Handle function calls
+  const functionMatch = arg.match(/^(\w+)\((.*)\)$/);
+  if (functionMatch) {
+    const funcName = functionMatch[1];
+    const argsString = functionMatch[2];
+
+    const args = [];
+    let currentArg = "";
+    let parenCount = 0;
+    let inQuotes = false;
+
+    for (let i = 0; i < argsString.length; i++) {
+      const char = argsString[i];
+
+      if (char === '"' && argsString[i - 1] !== "\\") {
+        inQuotes = !inQuotes;
+      }
+
+      if (!inQuotes) {
+        if (char === "(") parenCount++;
+        if (char === ")") parenCount--;
+        if (char === "," && parenCount === 0) {
+          args.push(await parseArgument(currentArg.trim()));
+          currentArg = "";
+          continue;
+        }
+      }
+
+      currentArg += char;
+    }
+
+    if (currentArg.trim()) {
+      args.push(await parseArgument(currentArg.trim()));
+    }
+
+    if (typeof runtime[funcName] === "function") {
+      return await runtime[funcName](...args);
+    } else {
+      throw new Error(`Error: Function ${funcName} is not defined.`);
+    }
+  }
+
   // Handle logical NOT (hoina)
   if (arg.startsWith("hoina(") && arg.endsWith(")")) {
     const inner = arg.slice(6, -1).trim();

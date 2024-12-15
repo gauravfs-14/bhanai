@@ -1,0 +1,14 @@
+rakha("age", 25)
+rakha("sachho", jutho)
+
+# Logical AND
+yadi age > 18 ra age < 60:
+    bhanai("Timro umar kaam garna anukul chha.")
+
+# Logical OR
+yadi age < 18 athawa age > 60:
+    bhanai("Timro umar kaam garna anukul chhaina.")
+
+# Logical NOT
+yadi hoina(sachho):
+    bhanai("This is not true.")
