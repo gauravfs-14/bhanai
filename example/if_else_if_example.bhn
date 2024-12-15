@@ -1,0 +1,8 @@
+rakha("age", 13)
+
+yadi age < 13:
+    bhanai("Timro umar balak ho.")
+athawa age < 20:
+    bhanai("Timro umar kishor ho.")
+aru:
+    bhanai("Timro umar pragatisheel ho.")

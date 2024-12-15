@@ -149,17 +149,21 @@ const parseBlock = (lines, startIndex, currentIndent) => {
 export const parseFile = async (filePath) => {
   const lines = (await fs.readFile(filePath, "utf-8")).split("\n");
   let isInsideMultilineComment = false;
-  let skipNextElse = false;
+  let i = 0;
 
-  for (let i = 0; i < lines.length; i++) {
+  while (i < lines.length) {
     let line = lines[i];
 
     // Handle multi-line comments
     if (line.trim().startsWith('"""')) {
       isInsideMultilineComment = !isInsideMultilineComment;
+      i++;
       continue;
     }
-    if (isInsideMultilineComment) continue;
+    if (isInsideMultilineComment) {
+      i++;
+      continue;
+    }
 
     // Remove inline comments
     const commentIndex = Math.min(
@@ -172,41 +176,71 @@ export const parseFile = async (filePath) => {
     }
 
     line = line.trim();
-    if (!line) continue;
+    if (!line) {
+      i++;
+      continue;
+    }
 
     // Handle conditions
     if (line.startsWith("yadi ") && line.endsWith(":")) {
-      const conditionStr = line.slice(5, -1).trim();
-      const condition = await parseArgument(conditionStr);
-      const currentIndent = lines[i].search(/\S/);
-      const { blockLines, nextIndex } = parseBlock(lines, i + 1, currentIndent);
+      let conditionMet = false;
+      while (i < lines.length) {
+        line = lines[i].trim();
 
-      if (condition) {
-        for (const blockLine of blockLines) {
-          await parseLine(blockLine);
-        }
-        skipNextElse = true; // Skip the next 'aru' block
-      } else {
-        skipNextElse = false;
-      }
-      i = nextIndex - 1;
-      continue;
-    } else if (line.startsWith("aru:")) {
-      const currentIndent = lines[i].search(/\S/);
-      const { blockLines, nextIndex } = parseBlock(lines, i + 1, currentIndent);
+        if (
+          (line.startsWith("yadi ") || line.startsWith("athawa ")) &&
+          line.endsWith(":")
+        ) {
+          // 'yadi' or 'athawa' clause
+          let conditionStr;
+          if (line.startsWith("yadi ")) {
+            conditionStr = line.slice(5, -1).trim();
+          } else {
+            conditionStr = line.slice(7, -1).trim();
+          }
+          const condition = await parseArgument(conditionStr);
+          const currentIndent = lines[i].search(/\S/);
+          const { blockLines, nextIndex } = parseBlock(
+            lines,
+            i + 1,
+            currentIndent
+          );
 
-      if (!skipNextElse) {
-        // Execute the 'aru' block
-        for (const blockLine of blockLines) {
-          await parseLine(blockLine);
+          if (condition && !conditionMet) {
+            for (const blockLine of blockLines) {
+              await parseLine(blockLine);
+            }
+            conditionMet = true;
+          }
+
+          i = nextIndex;
+        } else if (line.startsWith("aru:")) {
+          // 'aru' clause
+          const currentIndent = lines[i].search(/\S/);
+          const { blockLines, nextIndex } = parseBlock(
+            lines,
+            i + 1,
+            currentIndent
+          );
+
+          if (!conditionMet) {
+            for (const blockLine of blockLines) {
+              await parseLine(blockLine);
+            }
+          }
+
+          i = nextIndex;
+          break;
+        } else {
+          // No more clauses
+          break;
         }
       }
-      skipNextElse = false; // Reset after handling 'aru'
-      i = nextIndex - 1;
       continue;
     }
 
     // Parse the line as a command
     await parseLine(line);
+    i++;
   }
 };
