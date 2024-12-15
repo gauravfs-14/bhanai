@@ -1,0 +1,32 @@
+# String Manipulation Example
+
+rakha("greeting", "Namaste")
+
+# String concatenation
+rakha("fullGreeting", jodString(greeting, " Swagat chha Bhanai ma!"))
+bhanai("Full Greeting: " + fullGreeting)
+
+# String length
+rakha("greetingLength", lambai(greeting))
+bhanai("Length of greeting: " + greetingLength)
+
+# Substring
+bhanai("Substring (0, 7): " + tola(fullGreeting, 0, 7))
+
+# Replace substring
+rakha("replacedGreeting", badal(fullGreeting, "Namaste", "Hello"))
+bhanai("Replaced Greeting: " + replacedGreeting)
+
+# Uppercase
+rakha("upperCaseGreeting", thuloAkshar(fullGreeting))
+bhanai("Uppercase Greeting: " + upperCaseGreeting)
+
+# Lowercase
+rakha("lowerCaseGreeting", sanoAkshar(fullGreeting))
+bhanai("Lowercase Greeting: " + lowerCaseGreeting)
+
+# Check if substring exists
+yadi chhaina(fullGreeting, "Bhanai"):
+    bhanai("Bhanai exists in the greeting.")
+aru:
+    bhanai("Bhanai does not exist in the greeting.")
