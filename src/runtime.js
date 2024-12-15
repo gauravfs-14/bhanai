@@ -25,6 +25,7 @@ const runtime = {
   get: (name) => {
     if (variables[name] !== undefined) return variables[name];
     if (constants[name] !== undefined) return constants[name];
+    if (runtime[name] !== undefined) return runtime[name]; // Added this line
     throw new Error(`Error: Variable ${name} is not defined.`);
   },
 
@@ -66,6 +67,15 @@ const runtime = {
     return a / b;
   },
   shesh: (a, b) => a % b,
+
+  // Logical operations
+  ra: (a, b) => a && b, // Logical AND
+  athawa: (a, b) => a || b, // Logical OR
+  hoina: (a) => !a, // Logical NOT
+
+  // Truthy and falsy values
+  sachho: true,
+  jutho: false,
 };
 
 export default runtime;
