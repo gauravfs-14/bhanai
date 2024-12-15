@@ -70,8 +70,18 @@ const parseLine = async (line) => {
   // Ignore empty lines
   if (!line) return;
 
-  // Ignore single-line comments starting with # or tippani
-  if (line.startsWith("#") || line.startsWith("tippani")) return;
+  // Handle inline comments with # or tippani
+  const commentIndex = Math.min(
+    ...["#", "tippani"].map((marker) =>
+      line.indexOf(marker) >= 0 ? line.indexOf(marker) : Infinity
+    )
+  );
+  if (commentIndex !== Infinity) {
+    line = line.slice(0, commentIndex).trim(); // Remove the inline comment
+  }
+
+  // Ignore the line if it's now empty after removing comments
+  if (!line) return;
 
   // Match and parse commands
   const commandMatch = line.match(/^(\w+)\((.*)\)$/);
