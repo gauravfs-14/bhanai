@@ -1,6 +1,30 @@
 # Bhanai Programming Language
 
-Bhanai is a simple and intuitive programming language with a Nepali touch, designed to perform basic operations like variable declarations, arithmetic calculations, console outputs, and user inputs. It leverages Node.js under the hood for execution, allowing users to create `.bhn` files and run them seamlessly.
+Bhanai is a simple and intuitive programming language with a Nepali touch. It leverages Node.js under the hood for execution, allowing users to create `.bhn` files and run them seamlessly.
+
+---
+
+## Installation
+
+To install Bhanai globally via NPM, use the following command:
+
+```bash
+npm install -g bhanai
+```
+
+---
+
+## Usage
+
+Once installed, you can run Bhanai programs using the `bhanai` command:
+
+1. Create a `.bhn` file with your Bhanai code. For example, `example.bhn`.
+2. Run the program with:
+   ```bash
+   bhanai example.bhn
+   ```
+
+---
 
 ## Features
 
