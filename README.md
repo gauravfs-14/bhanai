@@ -23,6 +23,8 @@
   - [6. User Input](#6-user-input)
   - [7. Conditional Statements](#7-conditional-statements)
   - [8. Comments](#8-comments)
+  - [9. Lists and Arrays](#9-lists-and-arrays)
+  - [10. Objects](#10-objects)
 - [Example Program](#example-program)
 - [File Extension](#file-extension)
 - [Running Bhanai Programs](#running-bhanai-programs)
@@ -137,6 +139,26 @@ Once installed, you can run Bhanai programs using the `chalau` command:
 | ----------- | ---------------- | -------------------------------------- |
 | Single-line | Inline comments. | `# This is a comment`                  |
 | Multi-line  | Block comments.  | `""" This is a multi-line comment """` |
+
+---
+
+### 9. **Lists and Arrays**
+
+| Function     | Description                   | Syntax Example                          |
+| ------------ | ----------------------------- | --------------------------------------- |
+| `lambaiList` | Gets length of array          | `bhanai(lambaiList(numbers))`           |
+| `thapList`   | Adds item to end of array     | `thapList(numbers, 6)`                  |
+| `hatauList`  | Removes and returns last item | `rakha("lastItem", hatauList(numbers))` |
+| Array Access | Access array element by index | `numbers[0]`                            |
+
+### 10. **Objects**
+
+| Function        | Description                 | Syntax Example               |
+| --------------- | --------------------------- | ---------------------------- |
+| `chaabiList`    | Gets object keys as array   | `bhanai(chaabiList(person))` |
+| `maanList`      | Gets object values as array | `bhanai(maanList(person))`   |
+| Property Access | Access object property      | `person.name`                |
+| Nested Access   | Access nested properties    | `school.students[0].name`    |
 
 ---
 

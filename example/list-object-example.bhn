@@ -1,0 +1,50 @@
+"""
+Example demonstrating lists and objects in Bhanai language
+"""
+
+# Create and use a list
+rakha("numbers", [1, 2, 3, 4, 5])
+bhanai("List ko pahilo number:", numbers[0])
+bhanai("List ko lambai:", lambaiList(numbers))
+
+# Add an item to list
+rakha("nayaItem", 6)
+thapList(numbers, nayaItem)
+bhanai("Naya list:", numbers)
+
+# Remove last item
+rakha("lastItem", hatauList(numbers))
+bhanai("Last item:", lastItem)
+bhanai("List after removal:", numbers)
+
+# Create and use an object
+rakha("person", {"name": "Ram", "age": 25, "city": "Kathmandu"})
+bhanai("Person ko naam:", person.name)
+bhanai("Person ko umer:", person.age)
+
+# Get object keys and values
+bhanai("Object ko chaabiharu:", chaabiList(person))
+bhanai("Object ko maanharu:", maanList(person))
+
+# Nested structures
+rakha("school", {
+    "name": "Nepal Academy",
+    "students": [
+        {"name": "Sita", "grade": 10},
+        {"name": "Hari", "grade": 11}
+    ]
+})
+bhanai("School name:", school.name)
+bhanai("Pahilo student:", school.students[0])
+bhanai("Pahilo student ko naam:", school.students[0].name)
+bhanai("Dosro student ko grade:", school.students[1].grade)
+
+# List of objects
+rakha("fruits", [
+    {"name": "Syau", "color": "rato"},
+    {"name": "Kera", "color": "pahelo"},
+    {"name": "Suntala", "color": "suntala"}
+])
+
+bhanai("Dosro fruit ko naam:", fruits[1].name)
+bhanai("Dosro fruit ko rang:", fruits[1].color)
