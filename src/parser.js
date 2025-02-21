@@ -4,7 +4,16 @@ import fs from "fs/promises";
 
 // Universal argument evaluator
 const parseArgument = async (arg) => {
+  if (typeof arg === "object" && arg !== null) {
+    return arg; // If already an object, return as-is
+  }
+
   arg = arg.trim();
+
+  // Handle string literals first
+  if (arg.startsWith('"') && arg.endsWith('"')) {
+    return arg.slice(1, -1);
+  }
 
   // Handle expressions with '+' operator
   if (arg.includes("+")) {
@@ -87,6 +96,140 @@ const parseArgument = async (arg) => {
     }
   }
 
+  // Handle array literals - Update this section
+  if (arg.startsWith("[") && arg.endsWith("]")) {
+    const arrayContent = arg.slice(1, -1).trim();
+    if (!arrayContent) return [];
+
+    const parsed = [];
+    let currentItem = "";
+    let depth = 0;
+    let inQuotes = false;
+
+    for (let i = 0; i < arrayContent.length; i++) {
+      const char = arrayContent[i];
+
+      if (char === '"' && arrayContent[i - 1] !== "\\") {
+        inQuotes = !inQuotes;
+      }
+
+      if (!inQuotes) {
+        if (char === "{" || char === "[") depth++;
+        if (char === "}" || char === "]") depth--;
+
+        if (char === "," && depth === 0) {
+          if (currentItem.trim()) {
+            parsed.push(await parseArgument(currentItem.trim()));
+          }
+          currentItem = "";
+          continue;
+        }
+      }
+
+      currentItem += char;
+    }
+
+    if (currentItem.trim()) {
+      parsed.push(await parseArgument(currentItem.trim()));
+    }
+
+    return parsed;
+  }
+
+  // Handle object literals - Update this section
+  if (arg.startsWith("{") && arg.endsWith("}")) {
+    const objectContent = arg.slice(1, -1).trim();
+    if (!objectContent) return {};
+
+    const obj = {};
+    let currentKey = "";
+    let currentValue = "";
+    let depth = 0;
+    let inQuotes = false;
+    let parsingKey = true;
+
+    for (let i = 0; i < objectContent.length; i++) {
+      const char = objectContent[i];
+
+      if (char === '"' && objectContent[i - 1] !== "\\") {
+        inQuotes = !inQuotes;
+        if (parsingKey) currentKey += char;
+        else currentValue += char;
+        continue;
+      }
+
+      if (!inQuotes) {
+        if (char === "{" || char === "[") depth++;
+        if (char === "}" || char === "]") depth--;
+
+        if (char === ":" && depth === 0 && parsingKey) {
+          currentKey = currentKey.trim();
+          if (currentKey.startsWith('"') && currentKey.endsWith('"')) {
+            currentKey = currentKey.slice(1, -1);
+          }
+          parsingKey = false;
+          continue;
+        }
+
+        if (char === "," && depth === 0) {
+          const parsedValue = await parseArgument(currentValue.trim());
+          obj[currentKey] = parsedValue;
+          currentKey = "";
+          currentValue = "";
+          parsingKey = true;
+          continue;
+        }
+      }
+
+      if (parsingKey) currentKey += char;
+      else currentValue += char;
+    }
+
+    if (currentKey && currentValue.trim()) {
+      const parsedValue = await parseArgument(currentValue.trim());
+      obj[currentKey] = parsedValue;
+    }
+
+    return obj;
+  }
+
+  // Handle complex property/array access
+  const complexAccess = arg.match(/^(\w+)((?:\.\w+|\[\d+\])+)$/);
+  if (complexAccess) {
+    const [_, baseVar, path] = complexAccess;
+    let result = await runtime.get(baseVar);
+
+    // Extract all property accesses and array indices
+    const accessors = path.match(/\.(\w+)|\[(\d+)\]/g);
+
+    for (const accessor of accessors) {
+      if (accessor.startsWith(".")) {
+        // Property access
+        const prop = accessor.slice(1);
+        if (!result || typeof result !== "object") {
+          throw new Error(`Cannot access property ${prop} of non-object`);
+        }
+        result = result[prop];
+      } else {
+        // Array access
+        const index = parseInt(accessor.slice(1, -1));
+        if (!Array.isArray(result)) {
+          throw new Error(`Cannot use array index on non-array`);
+        }
+        if (index < 0 || index >= result.length) {
+          throw new Error(`Array index ${index} out of bounds`);
+        }
+        result = result[index];
+      }
+
+      if (result === undefined) {
+        throw new Error(`Invalid property/index access: ${accessor}`);
+      }
+    }
+
+    return result;
+  }
+
   // Handle logical NOT (hoina)
   if (arg.startsWith("hoina(") && arg.endsWith(")")) {
     const inner = arg.slice(6, -1).trim();
@@ -150,27 +293,23 @@ const parseArgument = async (arg) => {
   return runtime.get(arg);
 };
 
-// Parse a single line of code
+// Update the parseLine function's argument handling
 const parseLine = async (line) => {
   line = line.trim();
-
-  // Ignore empty lines
   if (!line) return;
 
-  // Handle inline comments with # or tippani
+  // Handle comments
   const commentIndex = Math.min(
     ...["#", "tippani"].map((marker) =>
       line.indexOf(marker) >= 0 ? line.indexOf(marker) : Infinity
     )
   );
   if (commentIndex !== Infinity) {
-    line = line.slice(0, commentIndex).trim(); // Remove the inline comment
+    line = line.slice(0, commentIndex).trim();
   }
-
-  // Ignore the line if it's now empty after removing comments
   if (!line) return;
 
-  // Match and parse commands
+  // Match and parse commands with better array access handling
   const commandMatch = line.match(/^(\w+)\((.*)\)$/);
   if (!commandMatch) {
     throw new Error(`Syntax Error: Unable to parse line: ${line}`);
@@ -179,21 +318,27 @@ const parseLine = async (line) => {
   const command = commandMatch[1];
   const argsString = commandMatch[2];
 
+  // Parse arguments with array access awareness
   const args = [];
   let currentArg = "";
-  let parenCount = 0;
+  let depth = 0;
   let inQuotes = false;
 
-  for (const char of argsString) {
-    if (char === '"' && argsString[argsString.indexOf(char) - 1] !== "\\") {
+  for (let i = 0; i < argsString.length; i++) {
+    const char = argsString[i];
+
+    if (char === '"' && argsString[i - 1] !== "\\") {
       inQuotes = !inQuotes;
     }
 
     if (!inQuotes) {
-      if (char === "(") parenCount++;
-      if (char === ")") parenCount--;
-      if (char === "," && parenCount === 0) {
-        args.push(await parseArgument(currentArg.trim()));
+      if (char === "{" || char === "[") depth++;
+      if (char === "}" || char === "]") depth--;
+
+      if (char === "," && depth === 0) {
+        if (currentArg.trim()) {
+          args.push(await parseArgument(currentArg.trim()));
+        }
         currentArg = "";
         continue;
       }
@@ -231,12 +376,16 @@ export const parseFile = async (filePath) => {
   const lines = (await fs.readFile(filePath, "utf-8")).split("\n");
   let isInsideMultilineComment = false;
   let i = 0;
+  let multilineBuffer = "";
+  let openBraces = 0;
+  let openBrackets = 0;
+  let inQuotes = false;
 
   while (i < lines.length) {
-    let line = lines[i];
+    let line = lines[i].trim();
 
     // Handle multi-line comments
-    if (line.trim().startsWith('"""')) {
+    if (line.startsWith('"""')) {
       isInsideMultilineComment = !isInsideMultilineComment;
       i++;
       continue;
@@ -253,17 +402,48 @@ export const parseFile = async (filePath) => {
       )
     );
     if (commentIndex !== Infinity) {
-      line = line.slice(0, commentIndex);
+      line = line.slice(0, commentIndex).trim();
     }
 
-    line = line.trim();
     if (!line) {
       i++;
       continue;
     }
 
-    // Handle conditions
-    if (line.startsWith("yadi ") && line.endsWith(":")) {
+    // Count braces and brackets, respecting quotes
+    for (let j = 0; j < line.length; j++) {
+      const char = line[j];
+
+      if (char === '"' && line[j - 1] !== "\\") {
+        inQuotes = !inQuotes;
+        continue;
+      }
+
+      if (!inQuotes) {
+        if (char === "{") openBraces++;
+        if (char === "}") openBraces--;
+        if (char === "[") openBrackets++;
+        if (char === "]") openBrackets--;
+      }
+    }
+
+    // Accumulate multi-line object/array
+    if (openBraces > 0 || openBrackets > 0) {
+      multilineBuffer += line + " ";
+      i++;
+      continue;
+    } else if (multilineBuffer) {
+      // Process complete multi-line statement
+      line = multilineBuffer + line;
+      multilineBuffer = "";
+      inQuotes = false;
+    }
+
+    // Process the line
+    if (!line.startsWith("yadi ")) {
+      await parseLine(line);
+    } else {
+      // Handle yadi blocks
       let conditionMet = false;
       while (i < lines.length) {
         line = lines[i].trim();
@@ -319,9 +499,6 @@ export const parseFile = async (filePath) => {
       }
       continue;
     }
-
-    // Parse the line as a command
-    await parseLine(line);
     i++;
   }
 };

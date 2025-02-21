@@ -21,18 +21,29 @@ const runtime = {
     constants[name] = value;
   },
 
-  // Retrieve a variable or constant
+  // Retrieve a variable or constant - Update this function
   get: (name) => {
-    if (variables[name] !== undefined) return variables[name];
-    if (constants[name] !== undefined) return constants[name];
-    if (runtime[name] !== undefined) return runtime[name]; // Added this line
+    if (variables.hasOwnProperty(name)) return variables[name];
+    if (constants.hasOwnProperty(name)) return constants[name];
+    if (runtime.hasOwnProperty(name)) return runtime[name];
     throw new Error(`Error: Variable ${name} is not defined.`);
   },
 
   // Output to console
   bhanai: (...args) => {
-    // Trim each argument and ensure clean concatenation
-    const output = args.map((arg) => String(arg).trim()).join(" ");
+    const output = args
+      .map((arg) => {
+        if (arg === null) return "null";
+        if (arg === undefined) return "undefined";
+        if (Array.isArray(arg)) {
+          return JSON.stringify(arg); // Remove formatting for arrays
+        }
+        if (typeof arg === "object") {
+          return JSON.stringify(arg, null, 2); // Keep pretty printing for objects
+        }
+        return String(arg);
+      })
+      .join(" ");
     console.log(output);
   },
 
@@ -97,6 +108,36 @@ const runtime = {
   thapString: (str, padStr, length) => str.padEnd(length, padStr), // Pad string on the right
   suruThap: (str, padStr, length) => str.padStart(length, padStr), // Pad string on the left
   sabdaGanna: (str) => str.trim().split(/\s+/).length, // Count words in a string
+
+  // Array functions
+  lambaiList: (arr) => {
+    if (!Array.isArray(arr)) throw new Error("Not an array");
+    return arr.length;
+  },
+
+  thapList: (arr, item) => {
+    if (!Array.isArray(arr)) throw new Error("Not an array");
+    arr.push(item);
+    return arr;
+  },
+
+  hatauList: (arr) => {
+    if (!Array.isArray(arr)) throw new Error("Not an array");
+    return arr.pop();
+  },
+
+  // Object functions
+  chaabiList: (obj) => {
+    if (typeof obj !== "object" || obj === null)
+      throw new Error("Not an object");
+    return Object.keys(obj);
+  },
+
+  maanList: (obj) => {
+    if (typeof obj !== "object" || obj === null)
+      throw new Error("Not an object");
+    return Object.values(obj);
+  },
 };
 
 export default runtime;
