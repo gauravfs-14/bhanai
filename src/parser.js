@@ -3,6 +3,22 @@ import runtime from "./runtime.js";
 import fs from "fs/promises";
 
 // Universal argument evaluator
+
+// Add helper to check for unquoted plus operator
+const hasUnquotedPlus = (str) => {
+  let inQuotes = false;
+  for (let i = 0; i < str.length; i++) {
+    const char = str[i];
+    if (char === '"' && str[i - 1] !== "\\") {
+      inQuotes = !inQuotes;
+    }
+    if (!inQuotes && char === "+") {
+      return true;
+    }
+  }
+  return false;
+};
+
 const parseArgument = async (arg) => {
   if (typeof arg === "object" && arg !== null) {
     return arg; // If already an object, return as-is
@@ -10,13 +26,8 @@ const parseArgument = async (arg) => {
 
   arg = arg.trim();
 
-  // Handle string literals first
-  if (arg.startsWith('"') && arg.endsWith('"')) {
-    return arg.slice(1, -1);
-  }
-
-  // Handle expressions with '+' operator
-  if (arg.includes("+")) {
+  // Handle expressions with '+' operator if detected unquoted
+  if (hasUnquotedPlus(arg)) {
     const tokens = [];
     let currentToken = "";
     let inQuotes = false;
@@ -52,6 +63,16 @@ const parseArgument = async (arg) => {
     } else {
       return tokens.map((token) => String(token)).join("");
     }
+  }
+
+  // Handle string literals first
+  if (arg.startsWith('"') && arg.endsWith('"')) {
+    return arg.slice(1, -1);
+  }
+
+  // Handle numbers immediately
+  if (!isNaN(arg)) {
+    return Number(arg);
   }
 
   // Handle function calls
@@ -279,16 +300,6 @@ const parseArgument = async (arg) => {
     }
   }
 
-  // Handle string literals
-  if (arg.startsWith('"') && arg.endsWith('"')) {
-    return arg.slice(1, -1); // Remove quotes
-  }
-
-  // Handle numbers
-  if (!isNaN(arg)) {
-    return Number(arg);
-  }
-
   // Handle variables/constants
   return runtime.get(arg);
 };
@@ -318,7 +329,7 @@ const parseLine = async (line) => {
   const command = commandMatch[1];
   const argsString = commandMatch[2];
 
-  // Parse arguments with array access awareness
+  // Parse arguments with array access awareness (updated to track parentheses)
   const args = [];
   let currentArg = "";
   let depth = 0;
@@ -332,8 +343,8 @@ const parseLine = async (line) => {
     }
 
     if (!inQuotes) {
-      if (char === "{" || char === "[") depth++;
-      if (char === "}" || char === "]") depth--;
+      if (char === "(" || char === "{" || char === "[") depth++;
+      if (char === ")" || char === "}" || char === "]") depth--;
 
       if (char === "," && depth === 0) {
         if (currentArg.trim()) {
